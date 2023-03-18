@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UI.WorldSpace;
 using UnityEngine;
 
 namespace Astesia
@@ -8,6 +9,8 @@ namespace Astesia
     {
         EnemyAnimatorManager enemyAnimatorManager;
         EnemyManager enemyManager;
+
+        public UIEnemyHealthBar enemyHealthBar;
         public int soulsAwardedOnDeath;
 
         private void Awake()
@@ -20,6 +23,8 @@ namespace Astesia
         {
             maxHP = healthLevel * 10;
             currentHP = maxHP;
+            if (enemyHealthBar != null)
+                enemyHealthBar.SetMaxHp(maxHP);
         }
 
         public void TakeDamage(int damage)
@@ -27,6 +32,8 @@ namespace Astesia
             if (isDead) return;
 
             currentHP -= damage;
+            if (enemyHealthBar != null)
+                enemyHealthBar.SetCurrentHp(currentHP);
 
             if (currentHP <= 0)
             {
@@ -41,12 +48,13 @@ namespace Astesia
 
         public void TakeDamageWithoutAnimation(int damage)
         {
-
             if (isDead)
                 return;
 
             enemyManager.canBeRiposted = false;
             currentHP -= damage;
+            if (enemyHealthBar != null)
+                enemyHealthBar.SetCurrentHp(currentHP);
 
             if (currentHP <= 0)
             {
@@ -66,6 +74,5 @@ namespace Astesia
                 playerStats.AddSoul(soulsAwardedOnDeath);
             }
         }
-
     }
 }

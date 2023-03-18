@@ -51,7 +51,7 @@ namespace Astesia
         public LayerMask environmentLayer;
         List<CharaManager> avilableLockOnTarget = new List<CharaManager>();
 
-        public CharaManager currentLockOnTarget;
+        public Transform currentLockOnTarget;
         bool lockOnInput;
         bool lockOnFlag;
 

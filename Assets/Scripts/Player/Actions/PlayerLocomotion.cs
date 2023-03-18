@@ -133,7 +133,7 @@ namespace Astesia
                 else
                 {
                     Vector3 rotationDirection = moveDirection;
-                    rotationDirection = cameraManager.currentLockOnTarget.position - transform.position;
+                    rotationDirection = cameraManager.currentLockOnTarget.transform.position - transform.position;
                     rotationDirection.Normalize();
                     rotationDirection.y = 0;
 
