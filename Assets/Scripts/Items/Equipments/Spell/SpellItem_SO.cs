@@ -24,7 +24,7 @@ namespace Astesia
         [TextArea]
         public string spellDescription;
 
-        public virtual void SpellCasting(PlayerAnimatorManager animatorController, PlayerStats charaStats)
+        public virtual void SpellCasting(PlayerAnimatorManager animatorController, PlayerStats charaStats, WeaponSlotManager weaponSlotManager)
         {
 
         }

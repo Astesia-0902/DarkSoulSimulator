@@ -1,9 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
+using Astesia;
 using Player.Equipments;
 using UnityEngine;
 
-namespace Astesia
+namespace Player.Actions
 {
     public class PlayerAttack : MonoBehaviour
     {
@@ -50,6 +49,7 @@ namespace Astesia
         }
 
         #region Input Actions
+
         private void HandleMouseLeftInput()
         {
             if (inputManager.mouseLeft_Input)
@@ -115,9 +115,11 @@ namespace Astesia
                 HandleBackStab();
             }
         }
+
         #endregion
 
         #region Attack Actions
+
         public void PerformMouseLeftMeleeAction()
         {
             //canDoCombo会在Animation Event中触发。
@@ -126,17 +128,16 @@ namespace Astesia
                 inputManager.comboFlag = true;
                 animatorController.anim.SetBool("isUsingRightHand", true);
                 HandleCombo(playerInventory.rightHandWeapon);
-                inputManager.comboFlag = false;//确保一次攻击只会触发一次连击。
+                inputManager.comboFlag = false; //确保一次攻击只会触发一次连击。
             }
             else
             {
                 if (playerManager.isInteracting)
                     return;
-                if (playerManager.canDoCombo) return;//确保一次攻击只会触发一次连击。
+                if (playerManager.canDoCombo) return; //确保一次攻击只会触发一次连击。
                 animatorController.anim.SetBool("isUsingRightHand", true);
                 LightAttack(playerInventory.rightHandWeapon);
             }
-
         }
 
         public void PerformMouseLeftCastAction(SpellItem_SO spellItem_SO)
@@ -155,13 +156,14 @@ namespace Astesia
                 switch (spellItem_SO.spellType)
                 {
                     case SpellType.FaithSpell:
-                        playerInventory.currentSpell.SpellCasting(animatorController, playerStats);
+                        playerInventory.currentSpell.SpellCasting(animatorController, playerStats, weaponSlotManager);
                         break;
 
                     case SpellType.MagicSpell:
                         break;
 
                     case SpellType.PyroSpell:
+                        playerInventory.currentSpell.SpellCasting(animatorController, playerStats, weaponSlotManager);
                         break;
                 }
             }
@@ -171,6 +173,7 @@ namespace Astesia
         {
             playerInventory.currentSpell.SpellCasted(animatorController, playerStats);
         }
+
         /// <summary>
         /// 处理连击释放的方法。
         /// </summary>
@@ -219,7 +222,6 @@ namespace Astesia
                     comboCount = 0;
                 }
             }
-
         }
 
         /// <summary>
@@ -253,7 +255,6 @@ namespace Astesia
             //if (uiManager.UIflag) return;
             if (inputManager.twoHandsFlag)
             {
-
             }
             else
             {
@@ -272,7 +273,7 @@ namespace Astesia
 
             //判断当前的位置和朝向是否可以背刺到目标
             if (Physics.Raycast(criticalAttackRaycastPoint.position,
-                transform.TransformDirection(Vector3.forward), out hit, 0.5f, backStabLayer))
+                    transform.TransformDirection(Vector3.forward), out hit, 0.5f, backStabLayer))
             {
                 if (hit.collider.gameObject.CompareTag("Back Stab") == false)
                 {
@@ -280,12 +281,13 @@ namespace Astesia
                 }
 
                 CharaManager enemyCharaManager = hit.transform.gameObject.GetComponentInParent<CharaManager>();
-                DamageCollider rightWeapon = weaponSlotManager.rightHandDamageCollider;//获取当前武器的数值
+                DamageCollider rightWeapon = weaponSlotManager.rightHandDamageCollider; //获取当前武器的数值
 
                 if (enemyCharaManager != null)
                 {
                     //将角色定位到背刺的站位
-                    playerManager.transform.position = enemyCharaManager.backStabCollider.criticalDamagerStandPoint.position;
+                    playerManager.transform.position =
+                        enemyCharaManager.backStabCollider.criticalDamagerStandPoint.position;
 
                     //调整角色的朝向
                     Vector3 rotationDirection = playerManager.transform.root.eulerAngles;
@@ -293,16 +295,18 @@ namespace Astesia
                     rotationDirection.y = 0;
                     rotationDirection.Normalize();
                     Quaternion tr = Quaternion.LookRotation(rotationDirection);
-                    Quaternion targetRotation = Quaternion.Slerp(playerManager.transform.rotation, tr, 500f * Time.deltaTime);
+                    Quaternion targetRotation =
+                        Quaternion.Slerp(playerManager.transform.rotation, tr, 500f * Time.deltaTime);
                     playerManager.transform.rotation = targetRotation;
 
-                    int criticalDamage = rightWeapon.weaponDamage * playerInventory.rightHandWeapon.criticalDamageMultiplier;
-                    enemyCharaManager.pendingCriticalDamage = criticalDamage;//注意这里是被背刺的目标即将受到的伤害。
+                    int criticalDamage = rightWeapon.weaponDamage *
+                                         playerInventory.rightHandWeapon.criticalDamageMultiplier;
+                    enemyCharaManager.pendingCriticalDamage = criticalDamage; //注意这里是被背刺的目标即将受到的伤害。
 
                     //播放背刺和被背刺的动画
                     animatorController.PlayTargetAnimation("Back Stab", true);
-                    enemyCharaManager.GetComponentInChildren<AnimatorManager>().PlayTargetAnimation("Back Stabbed", true);
-
+                    enemyCharaManager.GetComponentInChildren<AnimatorManager>()
+                        .PlayTargetAnimation("Back Stabbed", true);
                 }
             }
             //判断当前玩家和敌人的站位能否触发弹反处决
@@ -315,21 +319,25 @@ namespace Astesia
                 //如果敌人的当前状态可以被处决
                 if (enemyCharaManager != null && enemyCharaManager.canBeRiposted)
                 {
-                    playerManager.transform.position = enemyCharaManager.riposteCollider.criticalDamagerStandPoint.position;
+                    playerManager.transform.position =
+                        enemyCharaManager.riposteCollider.criticalDamagerStandPoint.position;
 
                     Vector3 rotationDirection = playerManager.transform.root.eulerAngles;
                     rotationDirection = hit.transform.position - playerManager.transform.position;
                     rotationDirection.y = 0;
                     rotationDirection.Normalize();
                     Quaternion tr = Quaternion.LookRotation(rotationDirection);
-                    Quaternion targetRotation = Quaternion.Slerp(playerManager.transform.rotation, tr, 500f * Time.deltaTime);
+                    Quaternion targetRotation =
+                        Quaternion.Slerp(playerManager.transform.rotation, tr, 500f * Time.deltaTime);
                     playerManager.transform.rotation = targetRotation;
 
-                    int criticalDamage = rightWeapon.weaponDamage * playerInventory.rightHandWeapon.criticalDamageMultiplier;
+                    int criticalDamage = rightWeapon.weaponDamage *
+                                         playerInventory.rightHandWeapon.criticalDamageMultiplier;
                     enemyCharaManager.pendingCriticalDamage = criticalDamage;
 
                     animatorController.PlayTargetAnimation("Parry Stab", true);
-                    enemyCharaManager.GetComponentInChildren<AnimatorManager>().PlayTargetAnimation("Parry Stabbed", true);
+                    enemyCharaManager.GetComponentInChildren<AnimatorManager>()
+                        .PlayTargetAnimation("Parry Stabbed", true);
                 }
             }
         }
@@ -338,7 +346,6 @@ namespace Astesia
         {
             if (inputManager.twoHandsFlag)
             {
-
             }
             else if (isLeftWeapon)
             {
@@ -346,10 +353,9 @@ namespace Astesia
             }
             else
             {
-
             }
-
         }
+
         #endregion
 
         #region Defence Actions
@@ -358,10 +364,10 @@ namespace Astesia
         {
             if (playerManager.isInteracting)
                 return;
-            
+
             if (playerManager.isBlocking)
                 return;
-            
+
             animatorController.PlayTargetAnimation("Block", false, true);
             inputManager.blockFlag = true;
             equipmentManager.OpenBlockCollider();

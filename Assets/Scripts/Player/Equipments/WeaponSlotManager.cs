@@ -5,12 +5,12 @@ using UnityEngine;
 namespace Astesia
 {
     /// <summary>
-    /// 插槽管理器，所有的插槽都可以在这里统一管理。
+    /// ?????????????е??????????????????????
     /// </summary>
     public class WeaponSlotManager : MonoBehaviour
     {
-        WeaponHolderSlot leftHandHolderSlot;
-        WeaponHolderSlot rightHandHolderSlot;
+        public WeaponHolderSlot leftHandHolderSlot;
+        public WeaponHolderSlot rightHandHolderSlot;
         WeaponHolderSlot backHolderSlot;
 
         public DamageCollider leftHandDamageCollider;
@@ -33,7 +33,7 @@ namespace Astesia
             inputManager = GetComponentInParent<InputManager>();
             anim = GetComponent<Animator>();
             quickSlotUI = FindObjectOfType<QuickSlotUI>();
-            //在子物体中找到所有的武器插槽。（武器插槽的脚本直接挂在角色的手上）
+            //????????????????е????????????????????????????????????
             WeaponHolderSlot[] weaponHolderSlots = GetComponentsInChildren<WeaponHolderSlot>();
 
             foreach (var slot in weaponHolderSlots)
@@ -87,7 +87,7 @@ namespace Astesia
                 {
                     backHolderSlot.UnloadAndDestroyWeapon();
                     #region Right Weapon Idle
-                    //从双持武器的空动画过渡到当前的动画。
+                    //??????????????????????????????
                     anim.CrossFade("Two Hands Empty", 0.2f);
 
                     if (weapon != null)
@@ -112,7 +112,7 @@ namespace Astesia
         }
 
         /// <summary>
-        /// 控制武器伤害碰撞盒的方法
+        /// ???????????????е????
         /// </summary>
         #region WeaponDamageColliders
         public void LoadWeaponDamageColliderLeft()
@@ -134,11 +134,11 @@ namespace Astesia
         }
 
         /// <summary>
-        /// 启用后，接触到碰撞盒的目标就会受到伤害。
+        /// ???ú?????????е??????????????
         /// </summary>
         public void EnableWeaponDamageCollider()
         {
-            //用两个flag标记当前攻击用的是哪只手的武器，不需要再写两个enable collider了
+            //??????flag?????????????????????????????????д????enable collider??
             if (playerManager.isUsingLeftHand)
             {
                 leftHandDamageCollider.EnableDamageCollider();
@@ -151,7 +151,7 @@ namespace Astesia
         }
 
         /// <summary>
-        /// 禁用后，接触到碰撞盒的目标就不会受到伤害。
+        /// ???ú?????????е????????????????
         /// </summary>
         public void DisableWeaponDamageCollider()
         {

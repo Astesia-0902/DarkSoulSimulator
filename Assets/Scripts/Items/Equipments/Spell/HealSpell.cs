@@ -9,9 +9,9 @@ namespace Astesia
     {
         public int healingAmount;
 
-        public override void SpellCasting(PlayerAnimatorManager animatorController, PlayerStats charaStats)
+        public override void SpellCasting(PlayerAnimatorManager animatorController, PlayerStats charaStats, WeaponSlotManager weaponSlotManager)
         {
-            base.SpellCasting(animatorController, charaStats);
+            base.SpellCasting(animatorController, charaStats, weaponSlotManager);
             GameObject instantiatedWarmUpFX = Instantiate(spellWarmUpFX, animatorController.transform.position, Quaternion.identity);
             animatorController.PlayTargetAnimation(spellAnimation, true);
         }
